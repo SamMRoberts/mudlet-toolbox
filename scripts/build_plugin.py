@@ -22,7 +22,7 @@ def build(output):
         with zipfile.ZipFile(temporary, "w", compression=zipfile.ZIP_DEFLATED) as archive:
             for path in sorted(PLUGIN.rglob("*")):
                 relative = path.relative_to(PLUGIN)
-                if "__pycache__" in relative.parts or path.suffix == ".pyc":
+                if "__pycache__" in relative.parts or path.suffix == ".pyc" or path.name == ".DS_Store":
                     continue
                 if path.is_symlink():
                     raise ValueError(f"symlink in plugin source: {relative}")
