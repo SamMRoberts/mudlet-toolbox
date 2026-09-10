@@ -39,3 +39,9 @@ luac.out
 *.x86_64
 *.hex
 
+# Local validation and distributable output
+__pycache__/
+*.pyc
+.venv/
+dist/
+build/

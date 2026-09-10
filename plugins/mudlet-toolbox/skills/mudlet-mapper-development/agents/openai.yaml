@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mudlet Mapper Development"
+  short_description: "Plan mapper updates with safe room ownership"
+  default_prompt: "Use $mudlet-mapper-development to plan a merge-safe mapper integration with explicit room identity and ownership."

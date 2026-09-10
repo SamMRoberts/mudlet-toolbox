@@ -1,0 +1,7 @@
+[
+  {
+    "name": "MudletToolboxDemoLifecycle",
+    "isActive": "yes",
+    "eventHandlerList": ["sysLoadEvent", "sysInstallPackage", "sysUninstallPackage"]
+  }
+]

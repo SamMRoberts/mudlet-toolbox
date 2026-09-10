@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mudlet Lua Scripting"
+  short_description: "Implement and debug Mudlet Lua behavior"
+  default_prompt: "Use $mudlet-lua-scripting to complete the requested Mudlet work and report the verification performed."

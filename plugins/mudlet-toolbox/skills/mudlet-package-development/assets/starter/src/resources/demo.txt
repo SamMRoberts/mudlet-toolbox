@@ -1,0 +1,2 @@
+Mudlet Toolbox local demonstration asset.
+Resolve with getMudletHomeDir() .. "/MudletToolboxDemo/demo.txt" after installation.

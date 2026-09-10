@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mudlet Packages"
+  short_description: "Build and maintain Mudlet packages and modules"
+  default_prompt: "Use $mudlet-package-development to complete the requested Mudlet work and report the verification performed."
