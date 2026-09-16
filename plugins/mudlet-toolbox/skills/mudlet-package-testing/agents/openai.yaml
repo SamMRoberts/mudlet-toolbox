@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mudlet Package Testing"
+  short_description: "Inspect packages and verify Mudlet behavior"
+  default_prompt: "Use $mudlet-package-testing to complete the requested Mudlet work and report the verification performed."

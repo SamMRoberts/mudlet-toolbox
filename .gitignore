@@ -1,3 +1,6 @@
+# macOS Finder metadata
+.DS_Store
+
 # Compiled Lua sources
 luac.out
 
@@ -39,3 +42,9 @@ luac.out
 *.x86_64
 *.hex
 
+# Local validation and distributable output
+__pycache__/
+*.pyc
+.venv/
+dist/
+build/

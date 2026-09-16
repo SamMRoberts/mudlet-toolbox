@@ -1,0 +1,20 @@
+{
+  "name": "mudlet-toolbox",
+  "interface": {
+    "displayName": "Mudlet Toolbox"
+  },
+  "plugins": [
+    {
+      "name": "mudlet-toolbox",
+      "source": {
+        "source": "local",
+        "path": "./plugins/mudlet-toolbox"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

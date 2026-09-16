@@ -1,0 +1,7 @@
+{
+  "package": "MudletToolboxDemo",
+  "title": "Local lifecycle demonstration",
+  "description": "A minimal Mudlet Toolbox example. Run toolbox-demo to display local status. No game commands are sent.",
+  "version": "0.1.0",
+  "author": "SamMRoberts"
+}

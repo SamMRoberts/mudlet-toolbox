@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mudlet Events and Protocols"
+  short_description: "Own event handlers and consume GMCP safely"
+  default_prompt: "Use $mudlet-events-protocols to implement an owned Mudlet event consumer with explicit lifecycle and protocol data handling."
