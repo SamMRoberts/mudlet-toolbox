@@ -1,6 +1,6 @@
 # Mudlet Toolbox
 
-A reusable Codex plugin for creating and maintaining Mudlet extensions. Six skills cover packages, Lua scripting, events and protocols, Geyser interfaces, maps, and testing. Version 0.2.0 adds comprehensive routed guidance for every topic in Mudlet's practical Geyser manual without adding overlapping skills.
+A reusable Codex plugin for creating and maintaining Mudlet extensions. Six skills cover packages, Lua scripting, events and protocols, Geyser interfaces, maps, and testing. Version 0.2.1 adds sparse-grid mapper guidance while retaining the comprehensive Geyser coverage introduced in 0.2.0.
 
 The initial examples target Mudlet 5.0.1. The skills require checking the user's actual runtime and existing project conventions. They distinguish offline validation from native Mudlet and connected-game acceptance.
 

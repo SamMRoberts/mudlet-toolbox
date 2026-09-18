@@ -1,6 +1,6 @@
 {
   "name": "mudlet-toolbox",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Build, debug, and validate Mudlet packages, Lua scripts, comprehensive Geyser interfaces, protocols, and maps.",
   "author": {
     "name": "SamMRoberts"
