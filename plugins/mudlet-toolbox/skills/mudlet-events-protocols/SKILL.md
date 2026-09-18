@@ -14,6 +14,8 @@ Identify the target Mudlet release, event names, owning component, and the serve
 5. When normalized state is intentionally public, raise owner-prefixed custom events with a documented argument contract rather than coupling other packages to handler order or internal tables.
 6. Exercise duplicate start, stop/restart, teardown, missing data, partial updates, and reconnect behavior. Report offline logic checks separately from actual protocol negotiation and delivery.
 
+When an event drives Geyser, normalize and copy application state in the protocol owner, then call one UI render function. Do not let the UI mutate shared protocol tables or make transport requests from presentation code. Stop protocol/event producers before deleting their target widgets; use `mudlet-geyser-ui` for Gauge/Label/MiniConsole freshness and native rendering behavior.
+
 Read [event and protocol contracts](references/event-protocol-contracts.md) for API semantics and reconnect decisions. Adapt [gmcp_listener.lua](examples/gmcp_listener.lua) when a small owned listener is useful; it returns a module and registers nothing until `start()`.
 
 The reference records a Mudlet 5.0.1 compatibility baseline, not a universal version requirement. Inspect the requested runtime before depending on newer helpers. Keep source excerpts and research logs outside the distributed skill.

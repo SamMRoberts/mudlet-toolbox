@@ -17,4 +17,6 @@ Inspect the target runtime, existing map state, source format, and identity cont
 
 Read [identity and merge safety](references/identity-merge-safety.md) before mapper mutations. Use [room_plan.lua](examples/room_plan.lua) for a read-only, single-room planning example. It proposes an ID without reserving or creating it; it is not an importer.
 
+Use `mudlet-geyser-ui` when the request is about constructing, embedding, docking, reparenting, styling, showing, or deleting a `Geyser.Mapper`. Keep room identity, topology, import, persistence, pathfinding, and movement in this skill. A rendered Mapper does not prove map data or server location is correct.
+
 The API baseline is Mudlet 5.0.1. Validate other requested releases and formats directly. Keep source data, raw research, and provenance outside the distributed skill.

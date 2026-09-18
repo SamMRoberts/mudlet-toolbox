@@ -1,6 +1,6 @@
 # Mudlet Toolbox
 
-A reusable Codex plugin for creating and maintaining Mudlet extensions. Six skills cover packages, Lua scripting, events and protocols, Geyser interfaces, maps, and testing. Version 0.1.1 incorporates the official Mudlet best-practices guidance without adding a broad overlapping skill.
+A reusable Codex plugin for creating and maintaining Mudlet extensions. Six skills cover packages, Lua scripting, events and protocols, Geyser interfaces, maps, and testing. Version 0.2.0 adds comprehensive routed guidance for every topic in Mudlet's practical Geyser manual without adding overlapping skills.
 
 The initial examples target Mudlet 5.0.1. The skills require checking the user's actual runtime and existing project conventions. They distinguish offline validation from native Mudlet and connected-game acceptance.
 
@@ -11,7 +11,7 @@ The initial examples target Mudlet 5.0.1. The skills require checking the user's
 | [mudlet-package-development](plugins/mudlet-toolbox/skills/mudlet-package-development/SKILL.md) | Native exports, modules, Muddler builds, metadata, assets, dependencies, and release preparation. |
 | [mudlet-lua-scripting](plugins/mudlet-toolbox/skills/mudlet-lua-scripting/SKILL.md) | Aliases, triggers, scripts, timers, keys, captures, state, and debugging. |
 | [mudlet-events-protocols](plugins/mudlet-toolbox/skills/mudlet-events-protocols/SKILL.md) | Owned event handlers, GMCP/MSDP data, negotiation, and connection lifecycle. |
-| [mudlet-geyser-ui](plugins/mudlet-toolbox/skills/mudlet-geyser-ui/SKILL.md) | Geyser layout, widgets, callbacks, resizing, and teardown. |
+| [mudlet-geyser-ui](plugins/mudlet-toolbox/skills/mudlet-geyser-ui/SKILL.md) | Geyser constraints, widgets, styles, consoles, gauges, windows, adjustable layouts, mapper displays, callbacks, persistence, and teardown. |
 | [mudlet-mapper-development](plugins/mudlet-toolbox/skills/mudlet-mapper-development/SKILL.md) | Room identity, map updates, exits, navigation, and preserving existing maps. |
 | [mudlet-package-testing](plugins/mudlet-toolbox/skills/mudlet-package-testing/SKILL.md) | Archive inspection and installation, reload, upgrade, uninstall, and coexistence checks. |
 
@@ -30,6 +30,10 @@ These are development skills, not an automatic MUSHclient converter or a game-sp
 The skills synthesize Mudlet's [Best Practices](https://wiki.mudlet.org/w/Manual:Best_Practices) and [Functions vs expandAlias](https://wiki.mudlet.org/w/Manual:Functions_vs_expandAlias) guidance into the relevant workflows. Recommendations remain contextual: for example, an adjustable container is useful for user-arranged panels but is not required for every widget, and a substring gate is useful only when a stable discriminator can cheaply exclude lines before an expensive regex.
 
 The wiki is rolling documentation. The 0.1.1 audit records the reviewed revision and how each recommendation maps to the six skills in [research/best-practices-alignment.md](research/best-practices-alignment.md). Release changes are summarized in [CHANGELOG.md](CHANGELOG.md).
+
+## Geyser coverage
+
+The Geyser skill is one concise router with focused references rather than a collection of overlapping skills. Its [topic index](plugins/mudlet-toolbox/skills/mudlet-geyser-ui/references/topic-index.md) maps every heading in the official [Geyser manual](https://wiki.mudlet.org/w/Special:MyLanguage/Manual:Geyser) to guidance for foundations/layouts, Labels/StyleSheets, consoles/gauges/input, native windows/adjustable containers/Mapper, or lifecycle/composition patterns. The [research alignment](research/geyser-manual-alignment.md) records the reviewed `oldid=21692` snapshot and native evidence boundaries; user-facing guidance keeps canonical live links.
 
 ## Install in Codex
 
@@ -50,7 +54,7 @@ The [Muddler starter](plugins/mudlet-toolbox/skills/mudlet-package-development/a
 
 The alias prints locally; it sends no game commands. The starter demonstrates Package Manager events, including a concise greeting only when that exact package is installed. Profile loads and unrelated package events do not print the greeting. Module-specific lifecycle work is described separately in the skills.
 
-Other examples demonstrate delayed-action cancellation, owned protocol listeners, a Geyser panel, and a read-only room identity planner. Their owning skills explain the intended integration and limits.
+Other examples demonstrate delayed-action cancellation, owned protocol listeners, a minimal Geyser panel, a composed responsive Geyser dashboard, and a read-only room identity planner. Their owning skills explain the intended integration and limits.
 
 Inspect a package without executing its Lua or extracting its files:
 

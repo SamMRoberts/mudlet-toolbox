@@ -27,6 +27,8 @@ Give a concise introduction on the exact package installation event when users n
 
 Read [lifecycle and release](references/lifecycle-release.md) for initialization, cleanup, dependencies, asset paths, settings, and release checks. Add only dependencies the extension needs; metadata alone does not prove that a dependency is installed or ready.
 
+For a Geyser interface, use `mudlet-geyser-ui` for the widget/layout contract. Package its redistributable fonts, images, cursor art, and notices below the extension; keep adjustable/UserWindow layout state outside replaceable assets; and make upgrade/uninstall behavior explicit for saved layouts, shared borders, native windows, and mapper displays.
+
 ## Verify the result
 
 Build with the project's documented command. Inspect the generated archive/XML and compare object inventory and assets with the contract. For an existing extension, compare before/after inventory as well as source diffs.

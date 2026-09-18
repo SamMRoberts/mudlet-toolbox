@@ -28,6 +28,8 @@ Read [input and state](references/input-state.md) for capture semantics, PCRE ve
 
 For a cancellable delayed action, adapt [delayed_action.lua](assets/delayed_action.lua). It snapshots a string argument, replaces pending work, and exposes `cancel`; it creates no timers until called. Load it with `dofile(path)` and instantiate it with an injected callback. It is an example, not a package bootstrap.
 
+For Geyser callbacks, command lines, animated Labels, or custom resize handlers, keep the Lua adapter owned and cancellable here, then use `mudlet-geyser-ui` for widget semantics, destination-specific escaping, focus/mouse behavior, and native acceptance. Do not turn CommandLine input, menu labels, or protocol text into executable callback source.
+
 ## Verify
 
 First test parsing and state transitions with representative positive, negative, and malformed input. Then verify the actual Mudlet object's pattern and callback using a disposable offline profile. Lua's pattern matcher or a Python regex engine does not prove a Mudlet PCRE trigger matches.

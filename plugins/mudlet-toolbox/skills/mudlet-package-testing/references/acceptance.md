@@ -41,6 +41,24 @@ Synthetic GMCP tests need the correct protocol table shape and event order, incl
 
 Review observable behavior and project intent rather than scanning for particular words or APIs. A recommendation can be inapplicable; record that decision instead of forcing unnecessary abstractions.
 
+## Geyser UI review
+
+Select the rows that apply to the interface; mark unrun native/connected checks explicitly.
+
+| Concern | Static or stub evidence | Native disposable-profile acceptance |
+| --- | --- | --- |
+| Ownership/lifecycle | Unique owner-qualified names; one retained instance; failure cleanup; stale callback guards; producer teardown before root deletion | No duplicate native objects after save/reload; widgets disappear on uninstall; another package survives. |
+| Constraints/containers | Parent tree, units, negative-anchor math, HBox/VBox policies, intended `changeContainer` destinations | Geometry at narrow/wide/high-DPI sizes; show/hide, clipping, z-order, and reparenting. |
+| Label/StyleSheet | External text escaped; packaged image/font/cursor paths; scoped selectors; owned animation timers/menu callbacks | Rich text, wrap/alignment, tooltip inheritance, images, hover/click/right-click, flyouts, cursors, animation cancellation. |
+| MiniConsole | Plain versus markup output is intentional; bounded buffer policy; capture/gag trigger is narrow | ANSI/color copy, selection edits, exact-line gagging, links, scrolling, background image, buffer behavior. |
+| Gauge | Finite values, positive maximum, explicit out-of-range/stale policy, escaped text | Orientation/color/style, tooltip, click layers, and click-through routing. |
+| CommandLine | Default send/alias behavior versus custom action is explicit; input stays data | Focus, history, input method, command echo, aliases, captured outgoing actions, accessibility. |
+| UserWindow | Stable name, supported platform/version, saved-layout policy, child ownership | Float/dock/autoDock, title/frame platform behavior, multi-monitor restart and off-screen recovery. |
+| Adjustable/ScrollBox | Owned persistence directory/slots, scoped operations, reversible custom menu/lock/border choices | Drag/resize/minimize/hide/lock, save/load/reset, menus, border/frame behavior, scroll/clipping. |
+| Mapper display | Display ownership separated from map-data ownership; no inferred import/path/movement result | Coexistence, embedded/docked/floating display, saved position, current-room follow, teardown. |
+
+For command-capable callbacks, capture unintended sends while offline. Connected-game acceptance is separate and should cover only the explicit protocol or gameplay contract.
+
 ## Evidence record
 
 Record the source revision or working-tree identity, archive hash, tool versions, profile name, connected/offline state, commands, expected/actual outcome, and limitations. Mark checks `passed`, `failed`, or `not run`; never convert unavailable native checks into passes because a stub succeeded.

@@ -1,48 +1,62 @@
-# Layout, naming, and lifecycle
+# Layout, lifecycle, and composition patterns
 
-## Own the widget tree
+## Own the complete UI lifecycle
 
-Names are native window identifiers as well as Geyser tracking keys. Use an owner-qualified prefix for every child, such as `component.instance.root` and `component.instance.status`. Do not reuse another component's names or infer ownership merely because a global or named widget exists. In 5.0.1, names ending in `Class` have special constructor handling; avoid that suffix for ordinary instances.
+Names are native window identifiers as well as Geyser tracking keys. Use an owner-qualified prefix for every object, such as `package.panel.root` and `package.panel.status`. Names must be globally unique within the profile, including UserWindows and objects from other packages. Avoid ordinary instance names ending in `Class`, which have special constructor handling in the 5.0.1 implementation.
 
-Keep instance references in the caller's established namespace. Before replacing an instance, run its cleanup; losing the reference loses ownership of native widgets and closures. A repeated initialization event should update or return the existing instance. A new object with the same names is not a safe substitute for teardown.
+Keep one retained instance in the package's established namespace. Split responsibilities into:
 
-`Geyser.Container:new(constraints, parent)` attaches to the supplied parent, or to Geyser's root when omitted. Constructor calls allocate/register immediately. Avoid them at module load time. Construct children under the owned root and record any resources outside that tree separately.
+- `mount`: validate capabilities, create the owned root, create children, bind callbacks, and register producers;
+- `render`: validate and copy external state, then update existing widgets;
+- `layout`: move, resize, or reparent existing widgets without rebuilding them;
+- `destroy`: stop producers, delete the owned tree, remove owned persistence, and restore shared layout only when the component still owns it.
 
-## Layout and rendering
+Geyser constructors allocate immediately. Do not create widgets at module load merely because a script was compiled. On construction failure, delete the partial root or every created child, leave no active callbacks, and preserve enough state to retry cleanup. A repeated initialization event should update or return the current instance; it should not allocate another object with the same names.
 
-Percent constraints refer to the parent, and plain numeric constraints are pixels. Negative offsets measure from the opposite edge. Offsetting a full-width child can put it outside its parent; account for inset space. Geyser already recalculates ordinary constrained layouts on resize. For custom breakpoints, use one owned `sysWindowResizeEvent` handler, read current dimensions, and resize/move existing objects. Filter user-window resize events separately when applicable; do not assume every resize describes the main console.
+In Mudlet 5.0.1, `container:delete()` recursively removes children and type-specific native widgets. Capability-check cleanup for other releases. Do not edit Geyser's internal tracking tables. `hide()` only changes visibility. Stop owned timers and event/protocol handlers before deleting their target widgets, then remove the uninstall handler itself. Filter `sysUninstallPackage` by exact package name; modules use different lifecycle events.
 
-Use percentages where the relationship should scale with the parent; keep pixels or character units for deliberate fixed-size details. If users should be able to move, resize, or dock a panel, consider `Adjustable.Container` and verify its availability on the target runtime. Decide whether geometry is automatically loaded or explicitly managed, namespace any saved layout state, and ensure package reload/uninstall does not leave an orphaned container. A fixed container remains appropriate when user adjustment would violate the interface contract.
+## Data, output, and callbacks
 
-Keep gauges, text, and layout updates independent. Display missing values explicitly, avoid division by zero, and bound values according to the application contract. Label text is rich text: escape `&`, `<`, `>`, quotes, and apostrophes before inserting external text. MiniConsole color markup is a different output grammar; HTML escaping is not a general console sanitizer. Never interpolate server data into Lua callback source or executable command links.
+Treat protocol values, game text, settings, filenames, and command-line input as untrusted data. Copy the needed values into component state rather than retaining mutable protocol tables. Escape label/gauge rich text for HTML; use plain `echo` for plain MiniConsole text; interpret `cecho`/`decho`/`hecho` markup only when the source is intentionally markup. Do not interpolate data into Lua callback strings, command links, or stylesheets.
 
-A native mapper is a special widget, not a normal duplicable label. Confirm mapper parent and visibility behavior in the target runtime, particularly with ScrollBoxes, detached windows, and competing map displays. Do not certify nested placement from a Geyser object tree alone.
+Prefer function callbacks and closures. Guard them with an instance generation or active flag so a retained native callback cannot act after teardown or remount. Mouse details may arrive after bound callback arguments; inspect the actual event signature when those details matter. Keep command dispatch behind an application function so a label, alias, key, or CommandLine can reuse it without re-entering the alias engine unexpectedly.
 
-## Common widgets without new dependencies
+Validate finite gauge values and positive maxima. Decide whether out-of-range values are clamped, rejected, or displayed as an explicit over/under state. Missing values are not zero. If an update is rejected, mark the display stale or unknown rather than leaving an apparently current reading silently.
 
-| Need | Concrete entrypoints and workflow |
-| --- | --- |
-| Numeric gauge | Construct `Geyser.Gauge:new(constraints, parent)` once; update with `gauge:setValue(current, maximum, text)` and change text alone with `gauge:setText(text)`. Without a maximum, `current` is a percentage. Validate finite numbers and a positive maximum first; escape external text because the gauge uses labels. In 5.0.1 an invalid nonpositive/NaN maximum leaves the old reading unchanged and returns `nil, message`; explicitly mark stale/unknown data rather than leaving it apparently current. |
-| Chat/history pane | Construct `Geyser.MiniConsole:new({name=ownedName, autoWrap=true, ...}, parent)`. Append plain text with `pane:echo(text)` or intentional color markup with `pane:cecho(text)`. Set a bounded history with `pane:setBufferSize(lineLimit, deletionBatch)`. Let `autoWrap` follow geometry; `pane:setWrap(columns)` is for manual wrapping and is rejected while auto-wrap is enabled in 5.0.1. |
-| Chat tabs | Reuse an already-present tab/chat package through its verified API, or build owned label selectors and one container/miniconsole per tab. A selector callback hides inactive panes and shows the active pane with `:hide()`/`:show()`. Keep hidden buffers alive, route each message once, and delete all panes only on teardown. No tab package is required. |
-| Action button | Use `Geyser.Label:new(constraints, parent)`, `label:echo(text)`, and `label:setClickCallback(function(...) ... end)`. Derive enabled/disabled styling and callback guards from the same state. Prefer calling an application action function; game commands remain explicit effects of that action. |
+## Composition patterns
 
-These entrypoints are verified for 5.0.1; check methods and behavior on other targets, especially wrapping and cleanup. Widget construction belongs to mount, incoming data to render, and tab selection to visibility changes.
+### Hello world and nested containers
 
-## Callbacks and teardown
+Start with a named Label for a visual smoke test, then introduce a named Container only when it represents a real ownership or layout boundary. Child coordinates are relative to their direct parent. Use `container:flash()` during diagnosis rather than leaving debugging decoration in production.
 
-`label:setClickCallback(fn, ...)` delegates to the native label callback and retains the callback on the Lua object. Mouse event details arrive as a final argument after bound arguments. Prefer a function closure over a generated Lua string. Guard against callbacks belonging to a destroyed instance, especially if callbacks queue other work.
+### Clickable compass or image control
 
-In 5.0.1, `container:delete()` recursively deletes children, removes Geyser tracking entries, then calls type-specific native cleanup. Label cleanup calls `deleteLabel`; native label destruction releases callback references. This does not remove unrelated anonymous event handlers or timers created by your component. Stop those explicitly before deleting the root. Do not edit Geyser's internal tracking tables to simulate destruction.
+Package redistributable images under the extension and build their paths from the installed package/profile location with `/` separators. Use a parent Container or Label with a 3-by-3 HBox/VBox or percentage grid. Bind direction functions directly and apply hover/pressed styles without generating Lua strings from direction data. A compass sends commands only when that is an explicit product behavior; construction itself has no server side effect.
 
-Capability-check the actual object's cleanup when supporting other releases. If recursive deletion is absent, implement and verify a type-specific cleanup adapter or narrow the supported runtime. `hide()` only changes visibility; do not silently use it as full teardown. Handle partial construction failure by cleaning up what was created, retaining enough state to retry cleanup if it fails.
+### Tabs
 
-Connect owner lifecycle to the appropriate startup and uninstall path. `sysUninstallPackage` receives `(eventName, packageName)`; filter the exact package name before destroying anything. Modules have distinct uninstall events, so do not promise module cleanup from a package-only hook. Remove the cleanup handler itself as part of teardown. Global borders, fonts, and shared mapper placement need coordinated ownership; blindly restoring a stale snapshot can overwrite another component's later change. Reverse owned border and layout changes on uninstall. If the UI specifies a font, ship a redistributable copy with the package or provide a deliberate fallback; do not assume the developer's installed fonts exist for users.
+Create an owned header HBox, one selector Label per tab, and one content Container/MiniConsole per view. A selector callback hides the previous content and shows the selected content. Keep hidden buffers alive and route each message exactly once. Preserve the selected tab across ordinary renders; persist it only when the product promises that setting. There is no separate Geyser tab primitive implied by this pattern.
 
-## Example and acceptance boundary
+### Responsive panel and resize handle
 
-`Panel.new(api, owner, onClick)` returns an object with `mount(parent)`, `setText(text)`, `resize(width, height)`, and `destroy()`. Loading it and calling `new` have no UI effects. Inject `_G` or a fake `api.Geyser`. Required Geyser methods are `Container:new`, inherited `Container:delete` and `resize`, plus `Label:new`, `echo`, and `setClickCallback`.
+Use parent-relative constraints, HBox/VBox policies, or an `Adjustable.Container` before writing a custom resize handle. The manual's historical resize-label walkthrough now directs readers to adjustable containers. If a custom square/aspect-ratio layout remains necessary, retain one resize handler, read the current parent dimensions, update existing objects, and avoid recreating the tree or writing back the main window size.
 
-The example requires recursive deletion, creates a `100%` root and label, and lets Geyser handle relative resize. It adds no resize handler or border changes. `setText` accepts a string and escapes it. `resize` accepts positive finite pixel dimensions as an explicit layout override. `mount` is idempotent while active; after destruction it can mount again. Callback generation guards prevent a retained old callback from acting on a remounted panel. Callers must supply a unique owner and destroy the old panel before creating a replacement with that owner.
+### Detachable workspace
 
-Offline checks can establish lifecycle calls, naming, escaping, and callback guards. A real disposable profile is required to establish layout at narrow/wide sizes, actual mouse event arguments, focus/scroll behavior, deletion of native widgets, and coexistence with other packages. Run such checks only within the authorized task scope.
+Keep content under one owned container and move it with `changeContainer` only after confirming destination support and name ownership. Treat moving between the main root, UserWindow, Adjustable.Container, and ScrollBox as a native acceptance boundary: constraints stay attached to the object but geometry, focus, clipping, and visibility may differ.
+
+## Shared borders, assets, and persistence
+
+Setting a Mudlet border is profile-wide state. Record what the component changed and restore it only if ownership/current-state checks show another package has not replaced it. Adjustable border attachment and connected frames require the same coordination. Do not blindly restore a startup snapshot over a newer user or package choice.
+
+Package every required image and redistributable font. Do not depend on the developer's desktop path or installed font collection. Keep durable user layout/settings outside replaceable package assets and namespace filenames by package/component. Decide separately whether uninstall removes saved layout; default to preserving user-authored settings unless the package contract promises removal or offers a reset.
+
+## Example contracts
+
+`owned_panel.lua` returns `Panel.new(api, owner, onClick)`. It creates a 100% root and Label only from `mount()`, escapes label text, accepts an explicit positive pixel resize, rejects stale callbacks, and deletes its owned root. It targets the 5.0.1 recursive-delete contract.
+
+`responsive_dashboard.lua` returns `Dashboard.new(api, owner, onSubmit)`. It composes Container, HBox, VBox, Label, Gauge, MiniConsole, and CommandLine objects, retains validated render state across remount, accepts plain console text, guards stale input callbacks, and deletes only its root. Its injected API is suitable for pure Lua ownership tests; it does not simulate native layout or input behavior.
+
+## Acceptance boundary
+
+Offline checks can establish construction order, names, state validation, escaped output, callback guards, and cleanup calls. Only a real disposable Mudlet profile can establish constraint geometry, CSS/selector behavior, mouse arguments, click-through, focus and history, selection/edit/gag effects, scrolling, UserWindow docking, saved layouts, Adjustable.Container menus/dragging, border attachment, mapper rendering, native deletion, and coexistence. Connected-game checks are additionally required for protocol-driven freshness and commands sent to a server.
