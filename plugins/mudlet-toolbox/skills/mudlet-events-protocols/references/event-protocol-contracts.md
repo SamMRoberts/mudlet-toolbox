@@ -15,6 +15,8 @@ Verified against Mudlet 5.0.1; choose capabilities for the actual target.
 
 Callbacks receive `(eventName, ...)`. `raiseEvent(name, ...)` delivers locally; avoid a global event unless cross-profile delivery is intentional. Handler ordering is unspecified. Do not coordinate consumers through registration order. In 5.0.1, a one-shot callback survives while its result is truthy; return exactly `true` to request another evaluation, and `nil`/`false` to finish. Named one-shot definitions still need lifecycle cleanup.
 
+For an event intended as a package integration point, use an owner-qualified name, document the argument order, value types, missing-value behavior, and whether payload tables are borrowed or copied. Raise it after normalization so consumers do not need to know protocol table internals. Do not create events for purely private calls where a direct function is simpler.
+
 Re-registering the same name is not an atomic rollback: validation failure can leave the previous handler stopped. Validate configuration before replacement. Stable names prevent duplicates but do not prevent an old instance from deleting a new instance's handler; tear down old instances first.
 
 ## GMCP data
@@ -32,6 +34,8 @@ Use `gmod.enableModule(owner, moduleName)` and pair it with `gmod.disableModule(
 In 5.0.1, enabling tracks a set of users for each exact module string and initially advertises dotted prefixes with version `1`. Re-enabling for the same owner does not create a reference count. Disabling removes that owner's interest and sends removal only once no users of that exact module remain. This is not a general dependency resolver for independently requested parent and child module strings. Do not send blanket `Core.Supports.Set` or direct removals that invalidate other consumers.
 
 The bundled reconnect handler calls `gmod.reenableModules()` on `sysProtocolEnabled` with protocol `"GMCP"`; that function returns early for an empty `gmcp` table. Do not promise reconnect delivery from registration alone. Test actual ordering with the server, using a deliberate reconnect policy rather than adding duplicate hooks. If the server requires another advertised version, design an explicit owner-aware negotiation path; `enableModule` has no version argument in this baseline. It returns no success value on its ordinary path, so a truthiness check cannot verify server acceptance.
+
+If the extension is authored by a game administrator, prefer publishing stable GMCP data and distributing the client package through an approved automatic installation path or the Mudlet Package Repository instead of requiring users to scrape presentation text. This is a server/distribution decision, not authority for a client-package task to change the game server or auto-install itself.
 
 ## MSDP and choosing a protocol
 

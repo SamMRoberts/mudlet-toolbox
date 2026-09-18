@@ -10,6 +10,8 @@ Capture IDs from temporary objects/anonymous handlers and remove only those owne
 
 Permanent objects are managed through the package's native object tree. Do not globally remove similarly named objects belonging to another package. Restore shared borders/settings only when ownership and current state permit it; do not overwrite a newer owner's changes.
 
+On `sysInstallPackage`, filter the exact package identity before printing a short introduction such as the primary command or configuration entrypoint. Keep `sysLoadEvent` quiet unless recurring startup output is part of the product. If the package raises events for other extensions, give them a unique prefix and document argument types, partial-data behavior, and lifecycle; use direct calls for private implementation details.
+
 ## User configuration
 
 Store user-editable settings outside the package directory if they must survive replacement or uninstall. Choose persistence according to the existing project. Specify defaults and schema migration only when persistence is actually required. Distinguish a missing settings file from a corrupt file; avoid silently overwriting recoverable user data.
@@ -24,4 +26,8 @@ For `table.save`/`table.load`, confirm argument order, accepted contents, and fa
 4. Test alongside a second package that uses overlapping events. Uninstalling one must leave the other functioning.
 5. Record exactly which artifact was tested; regenerate and recheck if source changed afterward.
 
-The Mudlet package repository supports website submission, a contribution of the package under its `packages/` directory, and a documented trusted-publishing workflow. Consult the current repository instructions when publishing is requested. Prepare metadata and artifacts first; do not infer permission to publish, push commits, or enroll CI from a request to build a package.
+Prefer the Mudlet Package Repository for update delivery when it fits the package and its users, so installations can receive maintained releases instead of depending on manual replacement. The repository supports website submission, a contribution of the package under its `packages/` directory, and a documented trusted-publishing workflow. Consult the current repository instructions when publishing is requested. Prepare metadata and artifacts first; do not infer permission to publish, push commits, or enroll CI from a request to build a package.
+
+Package every required font, image, sound, and notice with a portable path below the package directory; use `/` separators on every platform. For GMCP modules, pair each package-owned `gmod.enableModule` request with the matching owner/module disable during final teardown. If a game administrator controls the server, stable GMCP data and an approved automatic/package-repository install path can reduce client scraping and setup, but those server/distribution changes remain separate authorized work.
+
+For Geyser packages, inventory the UI tree and its external state separately: replaceable packaged assets, durable user settings, UserWindow layout, Adjustable.Container slots/files, and shared profile borders are different ownership domains. Upgrade must not erase user layout accidentally, while uninstall must stop producers and remove owned native widgets. Document any explicit reset that deletes saved layouts and test it only against namespaced package state.

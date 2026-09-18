@@ -1,4 +1,5 @@
 import importlib.util
+import json
 from pathlib import Path
 import tempfile
 import unittest
@@ -22,6 +23,8 @@ class PluginArchiveTests(unittest.TestCase):
                 self.assertIn(".codex-plugin/plugin.json", names)
                 self.assertEqual(len([n for n in names if n.endswith("/SKILL.md")]), 6)
                 self.assertFalse(any(n.startswith(("research/", "tests/")) or "__pycache__" in n for n in names))
+                manifest = json.loads(archive.read(".codex-plugin/plugin.json"))
+                self.assertEqual(manifest["version"], "0.2.0")
 
     def test_reject_output_inside_plugin(self):
         with self.assertRaisesRegex(ValueError, "outside"):

@@ -1,4 +1,4 @@
 interface:
   display_name: "Mudlet Geyser UI"
-  short_description: "Build responsive Geyser UI with clean teardown"
-  default_prompt: "Use $mudlet-geyser-ui to build or repair a responsive Mudlet interface with owned widgets and reliable teardown."
+  short_description: "Build complete Geyser UI with clean lifecycle"
+  default_prompt: "Use $mudlet-geyser-ui to build or repair a Mudlet Geyser interface, selecting the relevant layout, widget, styling, window, persistence, and lifecycle references."

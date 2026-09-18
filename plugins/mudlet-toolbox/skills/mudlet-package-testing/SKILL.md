@@ -25,6 +25,10 @@ Read [acceptance matrix](references/acceptance.md) and select relevant checks. U
 
 When available and within scope, run native checks in a disposable offline Mudlet profile. Keep generated profiles and evidence separate from the user's normal profile. Verify that profile selection and connection state are correct before replaying input or installing code. If a launch/automation mechanism cannot provide isolation, report the missing runtime evidence instead of repurposing a live profile.
 
+Review the changed boundary against [Mudlet's best-practices concerns](references/acceptance.md#best-practices-review). Treat them as decision checks, not text-matching rules: confirm why a recommendation applies, or record why the existing design is more appropriate.
+
+For Geyser work, also use the [Geyser acceptance matrix](references/acceptance.md#geyser-ui-review). Select checks for the actual widgets and platforms rather than claiming the entire matrix passed. Static object graphs and injected Lua APIs do not establish Qt rendering, focus, mouse routing, persistence, native windows, or mapper behavior.
+
 For package operations, observe each completion before starting the next. Verify both affected and unaffected packages afterward. Test the actual loaded artifact, not just the source that was intended to produce it.
 
 ## Deliver evidence

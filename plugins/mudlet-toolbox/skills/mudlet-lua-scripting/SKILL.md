@@ -17,18 +17,23 @@ Check the target Mudlet version and Lua runtime. Use Lua 5.1-compatible syntax f
 
 Read [input and state](references/input-state.md) for capture semantics, PCRE versus Lua patterns, output handling, timer ownership, and persistence. Keep input adapters thin and put reusable behavior into a package namespace or pure functions.
 
+- Prefer local variables and functions. Avoid `_G` for dynamic lookup when a normal local or the package's single public namespace will do; initialize that namespace with `Namespace = Namespace or {}` so an editor save does not discard state.
 - Capture event/trigger data before deferring work. `matches`, `multimatches`, `line`, and protocol globals can change before a timer callback runs.
 - Prefer functions or closures over assembling executable Lua from matched text. Treat game text as data.
+- Put reusable behavior in functions called directly by aliases, triggers, and keys. Avoid `expandAlias` between owned features: it re-enters alias matching, can recurse, and can replace `matches`.
+- For an expensive regex trigger with a stable literal discriminator, put a cheap substring condition ahead of it. Preserve match semantics and measure before complicating a simple trigger.
 - Preserve trigger ordering, multiline semantics, enable/disable behavior, and explicit send behavior when refactoring. Do not replace a persistent object with a temporary one without accounting for reload and teardown.
-- Keep temporary resources owned and cancellable. Retain IDs, clear them when one-shot work completes, and prevent duplicate registrations on script saves.
+- Keep temporary resources owned and cancellable. Retain IDs or use owner-qualified named registrations supported by the target release, clear one-shot ownership when work completes, and prevent duplicate registrations on script saves.
 - Use direct function calls between your own features. `expandAlias` passes through alias processing; `send` sends game commands; `echo` displays locally. Select the behavior the user requested.
 
 For a cancellable delayed action, adapt [delayed_action.lua](assets/delayed_action.lua). It snapshots a string argument, replaces pending work, and exposes `cancel`; it creates no timers until called. Load it with `dofile(path)` and instantiate it with an injected callback. It is an example, not a package bootstrap.
+
+For Geyser callbacks, command lines, animated Labels, or custom resize handlers, keep the Lua adapter owned and cancellable here, then use `mudlet-geyser-ui` for widget semantics, destination-specific escaping, focus/mouse behavior, and native acceptance. Do not turn CommandLine input, menu labels, or protocol text into executable callback source.
 
 ## Verify
 
 First test parsing and state transitions with representative positive, negative, and malformed input. Then verify the actual Mudlet object's pattern and callback using a disposable offline profile. Lua's pattern matcher or a Python regex engine does not prove a Mudlet PCRE trigger matches.
 
-Replaying captured lines through `feedTriggers` can execute every matching trigger, including commands that send to a server. Isolate replay from live gameplay and unrelated trigger trees. For multiline and ANSI-dependent behavior, preserve the original sequence and formatting.
+Use `feedTriggers` only as a test mechanism, never as the production data path for owned behavior. Replaying captured lines can execute every matching trigger, including commands that send to a server. Isolate replay from live gameplay and unrelated trigger trees. For multiline and ANSI-dependent behavior, preserve the original sequence and formatting.
 
 Report what changed, the input that reproduces it, and which checks exercised pure logic versus Mudlet's actual trigger/event engine. Use `mudlet-events-protocols` for protocol negotiation or event infrastructure, and `mudlet-package-testing` for a complete installation lifecycle.

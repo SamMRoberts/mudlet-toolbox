@@ -1,4 +1,5 @@
 MudletToolboxDemo = MudletToolboxDemo or { calls = 0, active = false }
+local PACKAGE_NAME = "@PKGNAME@"
 
 function MudletToolboxDemo.start()
   MudletToolboxDemo.active = true
@@ -11,10 +12,12 @@ function MudletToolboxDemo.status()
 end
 
 function MudletToolboxDemoLifecycle(event, packageName)
-  if event == "sysLoadEvent"
-      or (event == "sysInstallPackage" and packageName == "@PKGNAME@") then
+  if event == "sysLoadEvent" then
     MudletToolboxDemo.start()
-  elseif event == "sysUninstallPackage" and packageName == "@PKGNAME@" then
+  elseif event == "sysInstallPackage" and packageName == PACKAGE_NAME then
+    MudletToolboxDemo.start()
+    echo("Mudlet Toolbox demo installed. Run toolbox-demo for status.\n")
+  elseif event == "sysUninstallPackage" and packageName == PACKAGE_NAME then
     MudletToolboxDemo = nil
     MudletToolboxDemoLifecycle = nil
   end

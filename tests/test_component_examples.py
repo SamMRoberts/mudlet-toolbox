@@ -139,6 +139,97 @@ class PanelTests(unittest.TestCase):
         ''')
 
 
+class DashboardTests(unittest.TestCase):
+    def setUp(self):
+        self.lua = runtime("mudlet-geyser-ui/examples/responsive_dashboard.lua", "Dashboard")
+        self.lua.execute('''
+          objects = {}; deletions = 0; failAt = nil; submissions = {}
+          local Container = {kind = "Container"}
+          function Container:new(options, parent)
+            if failAt == options.name then error("construction failed at " .. options.name) end
+            local obj = setmetatable({name = options.name, options = options,
+              children = {}, parent = parent, kind = self.kind}, {__index = self})
+            if parent then table.insert(parent.children, obj) end
+            objects[obj.name] = obj
+            return obj
+          end
+          function Container:delete()
+            for _, child in ipairs(self.children) do child:delete() end
+            objects[self.name] = nil
+            deletions = deletions + 1
+          end
+          local function subclass(kind)
+            return setmetatable({kind = kind}, {__index = Container})
+          end
+          local HBox = subclass("HBox")
+          local VBox = subclass("VBox")
+          local Label = subclass("Label")
+          function Label:echo(text) self.text = text end
+          local Gauge = subclass("Gauge")
+          function Gauge:setValue(current, maximum, text)
+            self.current = current; self.maximum = maximum; self.text = text
+          end
+          local MiniConsole = subclass("MiniConsole")
+          function MiniConsole:echo(text) self.lastEcho = text end
+          local CommandLine = subclass("CommandLine")
+          function CommandLine:setAction(callback) self.callback = callback end
+          api = {Geyser = {Fixed = "Fixed", Container = Container, HBox = HBox, VBox = VBox,
+            Label = Label, Gauge = Gauge, MiniConsole = MiniConsole, CommandLine = CommandLine}}
+          dashboard = Dashboard.new(api, "demo", function(text)
+            submissions[#submissions + 1] = text
+          end)
+        ''')
+
+    def test_composition_state_output_and_stale_input_callback(self):
+        self.lua.execute('''
+          dashboard:render({title = "<Vitals>", status = "Ready & waiting",
+            current = 150, maximum = 100, gaugeText = "150 < 100?"})
+          assert(next(objects) == nil)
+          dashboard:mount()
+          assert(objects["demo.root"].kind == "Container")
+          assert(objects["demo.header"].kind == "HBox")
+          assert(objects["demo.body"].kind == "VBox")
+          assert(objects["demo.title"].text == "&lt;Vitals&gt;")
+          assert(objects["demo.status"].text == "Ready &amp; waiting")
+          assert(objects["demo.gauge"].current == 100)
+          assert(objects["demo.gauge"].maximum == 100)
+          assert(objects["demo.gauge"].text == "150 &lt; 100?")
+          assert(objects["demo.gauge"].options.v_policy == "Fixed")
+          dashboard:append("<plain console text>\\n")
+          assert(objects["demo.output"].lastEcho == "<plain console text>\\n")
+          local root = objects["demo.root"]
+          dashboard:mount(); assert(objects["demo.root"] == root)
+          local stale = objects["demo.input"].callback
+          stale("look"); assert(submissions[1] == "look")
+          dashboard:destroy(); assert(next(objects) == nil)
+          stale("north"); assert(#submissions == 1)
+          dashboard:mount()
+          assert(objects["demo.title"].text == "&lt;Vitals&gt;")
+          assert(objects["demo.gauge"].current == 100)
+          stale("south"); assert(#submissions == 1)
+          objects["demo.input"].callback("score")
+          assert(submissions[2] == "score")
+        ''')
+
+    def test_failure_cleanup_validation_and_owner_isolation(self):
+        self.lua.execute('''
+          failAt = "demo.output"
+          local ok, err = pcall(function() dashboard:mount() end)
+          assert(not ok and tostring(err):find("demo.output"))
+          assert(next(objects) == nil)
+          failAt = nil
+          dashboard:mount()
+          local other = Dashboard.new(api, "other", function() end)
+          other:mount(); dashboard:destroy()
+          assert(objects["other.root"] and objects["other.input"])
+          assert(objects["demo.root"] == nil)
+          assert(not pcall(function()
+            other:render({title = "x", status = "y", current = 1, maximum = 0})
+          end))
+          assert(not pcall(function() other:append(false) end))
+        ''')
+
+
 class MapperTests(unittest.TestCase):
     def setUp(self):
         self.lua = runtime("mudlet-mapper-development/examples/room_plan.lua", "Planner")

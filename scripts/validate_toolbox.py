@@ -22,6 +22,8 @@ def validate():
     manifest = json.loads((PLUGIN / ".codex-plugin" / "plugin.json").read_text())
     if manifest.get("name") != PLUGIN.name or manifest.get("skills") != "./skills/":
         errors.append("manifest name or skills path mismatch")
+    if manifest.get("version") != "0.2.0":
+        errors.append("manifest version is not 0.2.0")
     actual = {p.name for p in (PLUGIN / "skills").iterdir() if p.is_dir()}
     if actual != SKILLS:
         errors.append(f"unexpected skill folders: {actual ^ SKILLS}")
