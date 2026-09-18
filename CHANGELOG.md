@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1 - 2026-09-18
+
+- Clarified that cardinal exits constrain direction but do not require adjacent grid coordinates, allowing intentional gaps and long edges in sparse layouts.
+- Added coordinate-authority and provisional-only reflow guidance so layout conflicts cannot overwrite user, server, or foreign placement or alter valid topology.
+- Added a manor-loop behavioral scenario and refreshed version-aware validation and the deterministic source archive without changing the six-skill interface or marketplace policy.
+
 ## 0.2.0 - 2026-09-18
 
 - Expanded the existing Geyser skill into a progressive router covering every topic in the official practical manual, plus the live technical API's companion modules.

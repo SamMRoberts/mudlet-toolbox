@@ -1,15 +1,32 @@
 # Verification evidence
 
-Initial implementation checked 2026-09-09/10; the 0.1.1 best-practices alignment and 0.2.0 comprehensive Geyser update were checked 2026-09-18. This is a record of observed checks, not a claim that all future versions or MUDs work.
+Initial implementation checked 2026-09-09/10; the 0.1.1 best-practices alignment, 0.2.0 comprehensive Geyser update, and 0.2.1 sparse-grid mapper patch were checked 2026-09-18. This is a record of observed checks, not a claim that all future versions or MUDs work.
 
-## Toolchain
+## 0.2.1 sparse-grid mapper patch
+
+The existing Python 3.14.6 environment at `/private/tmp/mudlet-toolbox-020-venv` was reused with PyYAML 6.0.3 and Lupa 2.8; its directory name is historical and does not identify the validated plugin version.
+
+| Check | Result | Scope |
+| --- | --- | --- |
+| `scripts/validate_toolbox.py` | Passed: six skills and 41 plugin files | Metadata, 0.2.1 manifest, local links, expected skill inventory, JSON, and example Lua 5.1 syntax. |
+| Codex skill-creator `quick_validate.py` | Passed for `mudlet-mapper-development` | Updated skill format and frontmatter. |
+| Codex plugin-creator `validate_plugin.py` | Passed | Plugin manifest, skill, and UI metadata contract. |
+| `python -m unittest discover -s tests -v` | 49 tests passed | Existing component behavior, inspectors, Geyser coverage, and reproducible 0.2.1 archive checks. |
+| Sparse manor-loop scenario review | Passed by direct guidance review | Long-axis links, occupied adjacent coordinates, loop closure, coordinate authority, provisional-only reflow, and unresolved off-axis placement are addressed without filler rooms or topology changes. This is not an executed layout algorithm. |
+| `scripts/build_plugin.py` | Passed | Two temporary archives and the final archive compare byte-for-byte; source-only marketplace policy remains unchanged. |
+
+Final 0.2.1 plugin archive: `dist/mudlet-toolbox.zip`, 37 members, 66,603 bytes; SHA-256 `633cb515e056f56b0b11415f175cd9ee9dd42ab22adaec1e8fc79d0bc6b504de`. Archive inspection confirmed the 0.2.1 manifest and updated sparse-grid reference while excluding research, tests, caches, generated output, and Finder metadata.
+
+No native Mudlet rendering, persistence, pathfinding, server synchronization, or gameplay checks were run for this documentation-focused patch. The plugin was not installed, published, committed, pushed, tagged, or used to modify a Mudlet profile.
+
+## 0.2.0 baseline toolchain
 
 - Python 3.14.6, isolated 0.2.0 virtual environment under `/private/tmp/mudlet-toolbox-020-venv`.
 - PyYAML 6.0.3 and Lupa 2.8. Lua tests and syntax checks explicitly use `lupa.lua51`.
 - Muddler 1.1.0 release JAR and Eclipse Temurin Java 17.0.20.1, unpacked into temporary directories. No global tool installation.
 - Installed Mudlet 5.0.1 identified through its bundle metadata; release-specific source inspected separately.
 
-## Checks performed
+## 0.2.0 baseline checks
 
 | Check | Result | Scope |
 | --- | --- | --- |

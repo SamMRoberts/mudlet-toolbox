@@ -23,12 +23,26 @@ Use a stable, unambiguous composite key for source/world plus external ID. Mudle
 
 Some mapper APIs assume a map object internally; establish map availability before invoking an entire pipeline. `pcall` catches Lua errors, not native crashes. Do not invent a common return-value convention across mapper APIs.
 
+## Topology on sparse grids
+
+A standard exit records graph topology independently from visual distance. For rooms on the same area and floor, a north/south/east/west relationship may span one or more grid cells. Under a straight-axis layout policy, north requires the destination to have the same x coordinate and a greater y coordinate; south uses a smaller y, east the same y and greater x, and west the same y and smaller x. The sign matters, but the magnitude need not be one. Up/down, cross-area links, and special exits need their own project-defined placement rules rather than inheriting this planar rule.
+
+Do not create intermediate rooms, retarget an exit, synthesize a reverse exit, or move an established room merely to fill or remove empty grid cells. A valid long edge can cross unused coordinates. If an existing destination is off the expected axis, keep valid source topology and report a placement conflict separately; visual placement is not evidence that the exit points to a different room.
+
+Before assigning or changing coordinates:
+
+1. Classify each relevant coordinate as source-authoritative, user-edited or foreign, mapper-owned established, or mapper-owned provisional. Treat every class except the last as fixed unless the user explicitly authorizes a broader re-layout.
+2. Gather every already positioned incident neighbor and occupied coordinate, not only the room from which the new room was discovered. Test a candidate against all known directional constraints so closing a loop cannot silently invalidate an earlier edge.
+3. Evaluate candidates along the permitted directional ray using the mapper's documented spacing policy. Nearest-free placement can be a preference, but it is not proof of adjacency; retain or introduce gaps when occupancy, loop closure, or space for an inner cluster requires them. Do not impose one universal spacing value on every source.
+4. If no candidate satisfies the fixed constraints, prepare a reviewable insertion or reflow plan limited to mapper-owned provisional rooms. Revalidate every moved room against occupancy and all incident topology. If no safe provisional-only plan exists, defer the coordinate change and report the layout conflict without discarding or rewriting the exit.
+5. Recheck ownership immediately before applying a reflow, journal the moved rooms, and read back their coordinates and ownership afterward. Refresh the map only after the batch is coherent so retries can distinguish completed moves from pending ones.
+
 ## Apply a merge in phases
 
 1. Normalize and validate the source offline. Reject duplicate composite identities, malformed IDs, dangling references, and unsupported source formats. Retain per-record errors rather than silently dropping features.
 2. Inspect existing identities and owned fields; prepare a reviewable plan. Hash collisions, missing linked rooms, inconsistent reverse links, and owner mismatches block that record. Do not repair them by overwriting foreign data.
 3. For each new room, obtain and immediately add an unused ID before yielding. Set owned identity metadata and the hash, checking results and reading the links back. A group of planned candidate IDs is not a reservation pool. Track locally reserved IDs when planning a batch, or allocate each ID during application.
-4. Populate agreed fields and areas, then resolve exits against the completed source-to-local map. Do not synthesize reverse exits. Keep special exits, doors, locks, weights, and movement commands distinct; infer none from a directional label. Avoid overwriting user layout or annotations unless their fields are explicitly owned.
+4. Populate agreed fields and areas, then resolve exits against the completed source-to-local map. Validate sparse-grid placement separately from exit identity. Do not synthesize reverse exits. Keep special exits, doors, locks, weights, and movement commands distinct; infer none from a directional label. Avoid overwriting user layout or annotations unless their fields are explicitly owned.
 5. Journal successful steps and errors across bounded batches. Recheck ownership after a yield. A failure after room creation is partial application, not a transaction rollback. Report it and resume only from verified state; do not delete preexisting rooms during cleanup. Check topology before calling `updateMap()` once per coherent batch.
 
 For a merge, do not use map replacement/clearing APIs as an import shortcut. Saving or loading maps, bulk deletion, and actual travel are separate effects requiring the user's task scope. `centerview` changes displayed position; it is not proof of movement or confirmed server location. A path found in a graph does not establish that doors, special commands, locks, or server movement will succeed.
