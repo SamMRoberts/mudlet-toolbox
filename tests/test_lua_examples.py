@@ -60,10 +60,11 @@ class StarterTests(unittest.TestCase):
         lua.execute(source)
         lua.execute('''
           MudletToolboxDemoLifecycle("sysInstallPackage", "Other")
-          assert(MudletToolboxDemo.active == false)
+          assert(MudletToolboxDemo.active == false and #output == 0)
           MudletToolboxDemoLifecycle("sysInstallPackage", "MudletToolboxDemo")
+          assert(output[1] == "Mudlet Toolbox demo installed. Run toolbox-demo for status.\\n")
           MudletToolboxDemo.status()
-          assert(output[1] == "Mudlet Toolbox demo: ready; calls=1\\n")
+          assert(output[2] == "Mudlet Toolbox demo: ready; calls=1\\n")
         ''')
         lua.execute(source)
         lua.execute('''
@@ -71,7 +72,7 @@ class StarterTests(unittest.TestCase):
           MudletToolboxDemoLifecycle("sysUninstallPackage", "Other")
           assert(MudletToolboxDemo.active)
           MudletToolboxDemoLifecycle("sysLoadEvent", false)
-          assert(MudletToolboxDemo.calls == 1)
+          assert(MudletToolboxDemo.calls == 1 and #output == 2)
           MudletToolboxDemoLifecycle("sysUninstallPackage", "MudletToolboxDemo")
           assert(MudletToolboxDemo == nil and MudletToolboxDemoLifecycle == nil)
         ''')

@@ -41,6 +41,8 @@ For full-map JSON interchange, 5.0.1 provides `saveJsonMap(path)` and `loadJsonM
 
 Treat `loadMap` and `loadJsonMap` as whole-map restore/import operations, not ownership-aware merges. Use the phased room/exit workflow above for a merge. Verify snapshot round-trips in an authorized disposable profile; a successful write alone does not establish restoration fidelity. Do not load a snapshot into the active profile merely to test it.
 
+When extending Mudlet's generic mapper, place customization triggers and scripts in a separately owned folder or package, not inside `generic_mapper`. The generic mapper owns its folder and may replace it during updates. Record the dependency and test the customization after mapper upgrades without modifying or duplicating the managed objects.
+
 For route preview, call `getPath(fromRoomID, toRoomID)`. In 5.0.1 it returns `true, totalWeight` on success; a disconnected route returns `false, -1, message`, and invalid rooms/map return `nil, message`. It fills shared `speedWalkPath`, `speedWalkDir`, and `speedWalkWeight` tables; copy the needed route immediately before another planner can overwrite them, and never consume them after failure. This computes a route without starting travel.
 
 `gotoRoom(targetRoomID)` plans from the current mapped room and invokes `doSpeedWalk` through the configured speedwalk machinery. Use it only for requested movement, after checking the game's actual movement adapter, special exits, and server-confirmed current room. Stop the adapter's owned timers/queue on cancellation or location mismatch; there is no cancellation behavior implied by `getPath`. Replan from confirmed location rather than assuming completion. Verify these return contracts and adapter behavior for the requested runtime.

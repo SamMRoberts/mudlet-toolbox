@@ -1,6 +1,6 @@
 {
   "name": "mudlet-toolbox",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Build, debug, and validate Mudlet packages, Lua scripts, interfaces, protocols, and maps.",
   "author": {
     "name": "SamMRoberts"
@@ -9,14 +9,15 @@
   "interface": {
     "displayName": "Mudlet Toolbox",
     "shortDescription": "Develop and test Mudlet extensions.",
-    "longDescription": "Six focused skills for Mudlet package development, Lua scripting, events and protocols, Geyser interfaces, mapping, and package testing. Includes a Muddler starter, Lua examples, and a read-only package inspector.",
+    "longDescription": "Six focused skills for Mudlet package development, Lua scripting, events and protocols, Geyser interfaces, mapping, and package testing, aligned with official Mudlet best practices. Includes a Muddler starter, Lua examples, and a read-only package inspector.",
     "developerName": "SamMRoberts",
     "category": "Productivity",
     "capabilities": ["Read", "Write"],
     "defaultPrompt": [
       "Create a Mudlet package with an alias and clean lifecycle.",
       "Build a Geyser interface for my game's status data.",
-      "Check a Mudlet package for installation and cleanup issues."
+      "Check a Mudlet package for installation and cleanup issues.",
+      "Review my Mudlet extension against official best practices."
     ]
   }
 }

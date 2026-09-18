@@ -11,7 +11,8 @@ Identify the target Mudlet release, event names, owning component, and the serve
 2. Assign stable owner/handler names or retain anonymous handler IDs. Make start, stop, reload, and teardown explicit; dispose of the previous instance before replacing its references.
 3. Read current protocol data inside the callback. Validate each intermediate table and field; specify how missing, malformed, partial, and stale values affect the application.
 4. Manage optional GMCP modules through the component's own `gmod` identity. Establish the server's actual module names and versions; requesting support does not establish server support.
-5. Exercise duplicate start, stop/restart, teardown, missing data, partial updates, and reconnect behavior. Report offline logic checks separately from actual protocol negotiation and delivery.
+5. When normalized state is intentionally public, raise owner-prefixed custom events with a documented argument contract rather than coupling other packages to handler order or internal tables.
+6. Exercise duplicate start, stop/restart, teardown, missing data, partial updates, and reconnect behavior. Report offline logic checks separately from actual protocol negotiation and delivery.
 
 Read [event and protocol contracts](references/event-protocol-contracts.md) for API semantics and reconnect decisions. Adapt [gmcp_listener.lua](examples/gmcp_listener.lua) when a small owned listener is useful; it returns a module and registers nothing until `start()`.
 

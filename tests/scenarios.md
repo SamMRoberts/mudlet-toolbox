@@ -11,5 +11,6 @@ Use these as realistic task inputs in an isolated scratch project. A skill passi
 | geyser-ui | Build a resizable panel with a clickable status label and clean teardown. | Namespaced objects, safe text rendering, inert stale callbacks, and cleanup after partial failure; native visual acceptance recorded separately. |
 | mapper-development | Import room identities into a profile that already has a map. | Source identity differs from internal IDs; conflicts are surfaced; existing unrelated rooms are preserved. |
 | package-testing | Inspect an unknown package and determine whether it is safe to test in an offline profile. | No extraction or config execution during inspection; reports selected structure checks and remaining code-review/runtime uncertainty. |
+| package-testing | Review an extension against Mudlet's best-practices page. | Applies relevant recommendations by behavior, records justified exceptions, and does not invent features merely to satisfy a wording checklist. |
 
 Additional routing checks: a request for a Codex plugin manifest should not be mistaken for a Mudlet extension; package development should not silently become a game-specific MUSHclient conversion. Asking to prepare a package release does not itself publish it.

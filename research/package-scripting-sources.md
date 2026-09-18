@@ -1,6 +1,6 @@
 # Package and scripting research
 
-Reviewed 2026-09-09/10. Initial compatibility target: Mudlet 5.0.1, Muddler 1.1.0, Lua 5.1-compatible examples. Wiki pages are live documents and may describe newer or older behavior; release-tagged implementation resolves version-specific questions. These records are outside the distributable plugin.
+Reviewed 2026-09-09/10 and refreshed 2026-09-18 for the best-practices alignment. Initial compatibility target: Mudlet 5.0.1, Muddler 1.1.0, Lua 5.1-compatible examples. Wiki pages are live documents and may describe newer or older behavior; release-tagged implementation resolves version-specific questions. These records are outside the distributable plugin.
 
 | Source | Decisions supported |
 | --- | --- |
@@ -9,7 +9,8 @@ Reviewed 2026-09-09/10. Initial compatibility target: Mudlet 5.0.1, Muddler 1.1.
 | [Scripting](https://wiki.mudlet.org/w/Manual:Scripting) | Input objects, scripting boundaries, trigger/alias settings, and debugging workflow. |
 | [Lua API](https://wiki.mudlet.org/w/Manual:Lua_Functions) | Runtime API lookup, Lua 5.1 reference, timer/capture/output functions. |
 | [Event engine](https://wiki.mudlet.org/w/Manual:Event_Engine) | Profile-load versus installation events and package-filtered uninstall cleanup. |
-| [Best practices](https://wiki.mudlet.org/w/Manual:Best_Practices) | Namespacing, resource ownership, duplicate registrations, and cleanup. |
+| [Best practices](https://wiki.mudlet.org/w/Manual:Best_Practices) | Revision `oldid=22381`: Lua namespaces, Geyser layout, trigger performance, registration ownership, package/module lifecycle, distribution, protocol ownership, portable paths, and generic mapper customization. See the [alignment audit](best-practices-alignment.md). |
+| [Functions vs expandAlias](https://wiki.mudlet.org/w/Manual:Functions_vs_expandAlias) | Revision `oldid=6517`: direct shared-function calls avoid alias recursion, command-separator coupling, and replacement of the current `matches` table. |
 | [Mudlet 5.0.1](https://github.com/Mudlet/Mudlet/releases/tag/Mudlet-5.0.1) | Stable initial target; avoid treating public-test-build additions as stable APIs. |
 | [Host.cpp at 5.0.1](https://github.com/Mudlet/Mudlet/blob/Mudlet-5.0.1/src/Host.cpp) | Root XML/trigger discovery, config handling, distinct module events, and queued installation notifications. |
 | [XMLexport.cpp at 5.0.1](https://github.com/Mudlet/Mudlet/blob/Mudlet-5.0.1/src/XMLexport.cpp) | Native document structure, version marker, object sections, and bare MudletPackage DOCTYPE. |

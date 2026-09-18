@@ -1,6 +1,6 @@
 # Mudlet Toolbox
 
-A reusable Codex plugin for creating and maintaining Mudlet extensions. Six skills cover packages, Lua scripting, events and protocols, Geyser interfaces, maps, and testing.
+A reusable Codex plugin for creating and maintaining Mudlet extensions. Six skills cover packages, Lua scripting, events and protocols, Geyser interfaces, maps, and testing. Version 0.1.1 incorporates the official Mudlet best-practices guidance without adding a broad overlapping skill.
 
 The initial examples target Mudlet 5.0.1. The skills require checking the user's actual runtime and existing project conventions. They distinguish offline validation from native Mudlet and connected-game acceptance.
 
@@ -25,6 +25,12 @@ Use $mudlet-package-testing to inspect this mpackage and test its cleanup.
 
 These are development skills, not an automatic MUSHclient converter or a game-specific gameplay system.
 
+## Best-practices baseline
+
+The skills synthesize Mudlet's [Best Practices](https://wiki.mudlet.org/w/Manual:Best_Practices) and [Functions vs expandAlias](https://wiki.mudlet.org/w/Manual:Functions_vs_expandAlias) guidance into the relevant workflows. Recommendations remain contextual: for example, an adjustable container is useful for user-arranged panels but is not required for every widget, and a substring gate is useful only when a stable discriminator can cheaply exclude lines before an expensive regex.
+
+The wiki is rolling documentation. The 0.1.1 audit records the reviewed revision and how each recommendation maps to the six skills in [research/best-practices-alignment.md](research/best-practices-alignment.md). Release changes are summarized in [CHANGELOG.md](CHANGELOG.md).
+
 ## Install in Codex
 
 The repository includes a local marketplace catalog named `mudlet-toolbox`. From a local checkout, register the repository and install the plugin:
@@ -42,7 +48,7 @@ The distributable source is `plugins/mudlet-toolbox/`. Research and evaluation m
 
 The [Muddler starter](plugins/mudlet-toolbox/skills/mudlet-package-development/assets/starter/mfile) contains a complete small package with the `toolbox-demo` alias and a lifecycle adapter. Copy the whole starter directory to a fresh project, then run `muddle` from that project's root with Muddler 1.1.0. It produces `build/MudletToolboxDemo.xml` and `build/MudletToolboxDemo.mpackage`.
 
-The alias prints locally; it sends no game commands. The starter demonstrates Package Manager events. Module-specific lifecycle work is described separately in the skills.
+The alias prints locally; it sends no game commands. The starter demonstrates Package Manager events, including a concise greeting only when that exact package is installed. Profile loads and unrelated package events do not print the greeting. Module-specific lifecycle work is described separately in the skills.
 
 Other examples demonstrate delayed-action cancellation, owned protocol listeners, a Geyser panel, and a read-only room identity planner. Their owning skills explain the intended integration and limits.
 
